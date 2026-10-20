@@ -18,10 +18,10 @@ jobs:
       - name: Fetch the native-app tools
         id: tools
         continue-on-error: true
-        run: docker run --rm -v "$PWD:/src" -w /src -e NATIVE_APP_REPO=https://github.com/Phononenom/ps5-native-app-boilerplate.git ps5-doom-build make tools
+        run: docker run --rm -v "$PWD:/src" -w /src -e USE_CCACHE=0 -e NATIVE_APP_REPO=https://github.com/Phononenom/ps5-native-app-boilerplate.git ps5-doom-build make tools
       - name: Build the PS5 app
         if: steps.tools.outcome == 'success'
-        run: docker run --rm -v "$PWD:/src" -w /src -e NATIVE_APP_REPO=https://github.com/Phononenom/ps5-native-app-boilerplate.git ps5-doom-build make -j"$(nproc)" ps5
+        run: docker run --rm -v "$PWD:/src" -w /src -e USE_CCACHE=0 -e NATIVE_APP_REPO=https://github.com/Phononenom/ps5-native-app-boilerplate.git ps5-doom-build make -j"$(nproc)" ps5
       - name: Keep the app
         if: steps.tools.outcome == 'success'
         uses: actions/upload-artifact@v4
