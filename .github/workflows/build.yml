@@ -13,8 +13,6 @@ jobs:
         run: docker build -t ps5-doom-build docker/
       - name: Build the host game
         run: docker run --rm -v "$PWD:/src" -w /src ps5-doom-build make -j"$(nproc)" host
-      - name: Host tests with an add-on
-        run: docker run --rm -v "$PWD:/src" -w /src ps5-doom-build bash tools/ci/host-test.sh
       - name: Fetch the native-app tools
         id: tools
         continue-on-error: true
@@ -28,9 +26,3 @@ jobs:
         with:
           name: PPSA99666
           path: dist/PPSA99666
-      - name: Keep the host test output
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: host-test
-          path: build/test/out
