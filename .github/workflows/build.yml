@@ -1,0 +1,28 @@
+name: build
+on:
+  push:
+    branches: [ci-addons]
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build the image
+        run: docker build -t ps5-doom-build docker/
+      - name: Build the PS5 app and the host game
+        run: docker run --rm -v "$PWD:/src" -w /src ps5-doom-build make -j"$(nproc)" ps5 host
+      - name: Host tests with an add-on
+        run: docker run --rm -v "$PWD:/src" -w /src ps5-doom-build bash tools/ci/host-test.sh
+      - name: Keep the app
+        uses: actions/upload-artifact@v4
+        with:
+          name: PPSA99666
+          path: dist/PPSA99666
+      - name: Keep the host test output
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: host-test
+          path: build/test/out
