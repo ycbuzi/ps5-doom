@@ -3,7 +3,7 @@
 # ps5-native-tool (PIE to PS5 module converter, FSELF signer), libc.prx and the PS5 payload SDK.
 set -euo pipefail
 
-repo=https://github.com/blackbearreloaded/ps5-native-app-boilerplate.git
+repo=${NATIVE_APP_REPO:-https://github.com/blackbearreloaded/ps5-native-app-boilerplate.git}
 commit=b1315a9
 root=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)
 dest="$root/.deps/native-app"
