@@ -15,6 +15,8 @@ mkdir -p "$wads" "$save" "$out/first" "$out/second" "$test/stage"
 wget -q -O "$test/freedoom.zip" https://github.com/freedoom/freedoom/releases/download/v0.13.0/freedoom-0.13.0.zip
 echo "3f9b264f3e3ce503b4fb7f6bdcb1f419d93c7b546f4df3e874dd878db9688f59  $test/freedoom.zip" | sha256sum --check --quiet
 unzip -q -j "$test/freedoom.zip" freedoom-0.13.0/freedoom2.wad -d "$test/stage"
+# the launcher draws with the first game's graphics, and the console always ships the shareware
+bash tools/fetch-shareware.sh "$wads/doom1.wad"
 python3 -c 'import sys, zipfile; zipfile.ZipFile(sys.argv[1], "w", zipfile.ZIP_DEFLATED).write(sys.argv[2], "freedoom2.wad")' "$wads/freedoom2.zip" "$test/stage/freedoom2.wad"
 
 run() {
