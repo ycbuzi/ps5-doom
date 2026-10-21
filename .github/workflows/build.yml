@@ -13,7 +13,7 @@ jobs:
         run: docker build -t ps5-doom-build docker/
       - name: Build the host game
         run: docker run --rm -v "$PWD:/src" -w /src ps5-doom-build make -j"$(nproc)" host
-      - name: Host test: only new games are reported
+      - name: "Host test: only new games are reported"
         run: docker run --rm -v "$PWD:/src" -w /src ps5-doom-build bash tools/ci/newgames-test.sh
       - name: Keep the host test output
         if: always()
