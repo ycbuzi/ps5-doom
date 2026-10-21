@@ -1,0 +1,36 @@
+name: build
+on:
+  push:
+    branches: [ci-newgames]
+  workflow_dispatch:
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build the image
+        run: docker build -t ps5-doom-build docker/
+      - name: Build the host game
+        run: docker run --rm -v "$PWD:/src" -w /src ps5-doom-build make -j"$(nproc)" host
+      - name: Host test: only new games are reported
+        run: docker run --rm -v "$PWD:/src" -w /src ps5-doom-build bash tools/ci/newgames-test.sh
+      - name: Keep the host test output
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: host-test
+          path: build/test/out
+      - name: Fetch the native-app tools
+        id: tools
+        continue-on-error: true
+        run: docker run --rm -v "$PWD:/src" -w /src ps5-doom-build make tools
+      - name: Build the PS5 app
+        if: steps.tools.outcome == 'success'
+        run: docker run --rm -v "$PWD:/src" -w /src ps5-doom-build make -j"$(nproc)" ps5
+      - name: Keep the app
+        if: steps.tools.outcome == 'success'
+        uses: actions/upload-artifact@v4
+        with:
+          name: PPSA99666
+          path: dist/PPSA99666
